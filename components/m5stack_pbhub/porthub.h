@@ -1,7 +1,11 @@
 #ifndef __PORTHUB_H__
 #define __PORTHUB_H__
 
+#if defined(ARDUINO)
 #include <Wire.h>
+#elif defined(ESP_PLATFORM)
+#include "driver/i2c.h"
+#endif
 
 #define IIC_ADDR1 0x61
 #define IIC_ADDR2 0x62
@@ -45,12 +49,16 @@ class PortHub {
 
     void hub_wire_setBrightness(uint8_t reg, uint8_t brightness);
 
-   public:
    private:
+#if defined(ARDUINO)
     TwoWire *wire;
+#elif defined(ESP_PLATFORM)
+    // ESP-IDF I2C configuration parameters
+    i2c_port_t i2c_num = I2C_NUM_0; // Default I2C port number
+    gpio_num_t sda_io = GPIO_NUM_21; // Default SDA pin
+    gpio_num_t scl_io = GPIO_NUM_22; // Default SCL pin
+#endif
     uint8_t _iic_addr = IIC_ADDR1;
-
-   private:
 };
 
 #endif
